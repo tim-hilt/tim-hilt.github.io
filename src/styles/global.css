@@ -1,10 +1,33 @@
+/*
+ * Forest palette (shared with fleet-management/web).
+ * Light: pale mint canopy with deep evergreen ink.
+ * Dark: evergreen surfaces on a near-black forest floor, glowing moss
+ * highlights, pale lichen text.
+ *
+ * Colors use light-dark() and follow `color-scheme`, which defaults to the
+ * system preference and is overridden via [data-theme] on <html>.
+ */
 :root {
-	--text: #222;
-	--muted: #666;
-	--border: #e5e5e5;
-	--code-bg: #f5f5f5;
-	--link: #0b57d0;
+	--forest-1: oklch(34% 0.07 150);
+	--forest-2: oklch(20% 0.035 162);
+	--forest-3: oklch(42% 0.085 138);
+	--moss: oklch(74% 0.15 130);
+	--forest-5: oklch(76% 0.05 148);
+	--lichen: oklch(93% 0.035 135);
+
+	--bg: light-dark(oklch(97% 0.015 180), oklch(14% 0.025 170));
+	--text: light-dark(var(--forest-2), var(--lichen));
+	--muted: light-dark(var(--forest-3), var(--forest-5));
+	--border: light-dark(oklch(76% 0.05 148 / 45%), oklch(76% 0.05 148 / 12%));
+	--code-bg: light-dark(oklch(93% 0.035 135 / 70%), var(--forest-2));
+	--link: light-dark(var(--forest-1), var(--moss));
+	--link-hover: light-dark(var(--forest-3), var(--lichen));
+	--selection: light-dark(oklch(74% 0.15 130 / 35%), oklch(74% 0.15 130 / 30%));
+	--surface-active: light-dark(oklch(76% 0.05 148 / 35%), var(--forest-1));
+	--glow: light-dark(oklch(74% 0.15 130 / 18%), oklch(74% 0.15 130 / 9%));
 	--max-width: 42rem;
+
+	color-scheme: light dark;
 	font-family:
 		system-ui,
 		-apple-system,
@@ -16,9 +39,20 @@
 	font-size: 100%;
 	line-height: 1.6;
 	color: var(--text);
-	background: #fff;
+	background: var(--bg);
 	-webkit-text-size-adjust: 100%;
 	text-size-adjust: 100%;
+}
+
+:root[data-theme='light'] {
+	color-scheme: light;
+}
+:root[data-theme='dark'] {
+	color-scheme: dark;
+}
+
+::selection {
+	background: var(--selection);
 }
 
 *,
@@ -34,6 +68,9 @@ body {
 	min-height: 100dvh;
 	margin: 0;
 	overflow-wrap: break-word;
+	/* Faint moss light falling through the canopy. */
+	background-image: radial-gradient(ellipse 90% 60% at 50% -10%, var(--glow), transparent);
+	background-attachment: fixed;
 }
 
 main {
@@ -74,6 +111,10 @@ p {
 
 a {
 	color: var(--link);
+	text-underline-offset: 0.15em;
+}
+a:hover {
+	color: var(--link-hover);
 }
 
 img {
@@ -95,7 +136,12 @@ code {
 pre {
 	padding: 1rem;
 	overflow-x: auto;
-	border-radius: 4px;
+	border: 1px solid var(--border);
+	border-radius: 0.625rem;
+}
+/* Keep Shiki token colors but use the forest surface as background. */
+pre.astro-code {
+	background-color: var(--code-bg) !important;
 }
 pre > code {
 	padding: 0;
@@ -106,7 +152,7 @@ pre > code {
 blockquote {
 	margin: 0 0 1rem;
 	padding-left: 1rem;
-	border-left: 3px solid var(--border);
+	border-left: 3px solid var(--moss);
 	color: var(--muted);
 }
 

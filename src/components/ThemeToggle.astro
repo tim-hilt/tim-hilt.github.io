@@ -1,0 +1,99 @@
+<div class="theme-toggle" role="group" aria-label="Color theme">
+	<button type="button" data-theme-choice="light" aria-pressed="false" aria-label="Light theme" title="Light">
+		<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+			<circle cx="12" cy="12" r="4"></circle>
+			<path
+				d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+			></path>
+		</svg>
+	</button>
+	<button type="button" data-theme-choice="system" aria-pressed="true" aria-label="System theme" title="System">
+		<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+			<rect x="2" y="3" width="20" height="14" rx="2"></rect>
+			<path d="M8 21h8M12 17v4"></path>
+		</svg>
+	</button>
+	<button type="button" data-theme-choice="dark" aria-pressed="false" aria-label="Dark theme" title="Dark">
+		<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+			<path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path>
+		</svg>
+	</button>
+</div>
+
+<script>
+	type Theme = 'light' | 'dark' | 'system';
+	const STORAGE_KEY = 'theme';
+
+	function stored(): Theme {
+		try {
+			const value = localStorage.getItem(STORAGE_KEY);
+			return value === 'light' || value === 'dark' ? value : 'system';
+		} catch {
+			return 'system';
+		}
+	}
+
+	function apply(theme: Theme) {
+		const root = document.documentElement;
+		if (theme === 'system') delete root.dataset.theme;
+		else root.dataset.theme = theme;
+
+		try {
+			if (theme === 'system') localStorage.removeItem(STORAGE_KEY);
+			else localStorage.setItem(STORAGE_KEY, theme);
+		} catch {
+			// Storage unavailable (e.g. privacy mode): theme still applies for this page.
+		}
+
+		document.querySelectorAll<HTMLButtonElement>('[data-theme-choice]').forEach((button) => {
+			button.setAttribute('aria-pressed', String(button.dataset.themeChoice === theme));
+		});
+	}
+
+	document.querySelectorAll<HTMLButtonElement>('[data-theme-choice]').forEach((button) => {
+		button.addEventListener('click', () => apply(button.dataset.themeChoice as Theme));
+	});
+
+	apply(stored());
+</script>
+
+<style>
+	.theme-toggle {
+		display: inline-flex;
+		gap: 0.125rem;
+		padding: 0.125rem;
+		border: 1px solid var(--border);
+		border-radius: 999px;
+	}
+	button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 1.75rem;
+		height: 1.75rem;
+		padding: 0;
+		border: none;
+		border-radius: 999px;
+		background: none;
+		color: var(--muted);
+		cursor: pointer;
+	}
+	button:hover {
+		color: var(--text);
+	}
+	button:focus-visible {
+		outline: 2px solid var(--moss);
+		outline-offset: 1px;
+	}
+	button[aria-pressed='true'] {
+		background: var(--surface-active);
+		color: var(--link);
+	}
+	svg {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+</style>
