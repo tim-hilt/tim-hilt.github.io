@@ -1,18 +1,25 @@
 ---
 import { SITE_TITLE } from '../consts';
+import SocialLinks from './SocialLinks.astro';
 
 const today = new Date();
 ---
 
 <footer>
-	&copy; {today.getFullYear()} {SITE_TITLE}
+	<span>&copy; {today.getFullYear()} {SITE_TITLE}</span>
+	<span aria-hidden="true">&sdot;</span>
+	<SocialLinks />
 </footer>
 <style>
 	footer {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		width: 100%;
 		max-width: var(--max-width);
 		margin: 0 auto;
 		padding: 2rem 1rem;
-		border-top: 1px solid var(--border);
 		color: var(--muted);
 		font-size: 0.875rem;
 	}

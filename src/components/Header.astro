@@ -1,36 +1,35 @@
 ---
 import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
+import SocialLinks from './SocialLinks.astro';
 ---
 
 <header>
 	<nav>
 		<a class="site-title" href="/">{SITE_TITLE}</a>
-		<div class="links">
-			<HeaderLink href="/blog">Blog</HeaderLink>
+		<HeaderLink href="/blog">Blog</HeaderLink>
+		<div class="right">
+			<SocialLinks />
 			<HeaderLink href="/about">About</HeaderLink>
 		</div>
 	</nav>
 </header>
 <style>
-	header {
-		border-bottom: 1px solid var(--border);
-	}
 	nav {
 		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		max-width: var(--max-width);
-		margin: 0 auto;
-		padding: 1rem;
+		align-items: center;
+		gap: 2rem;
+		padding: 1rem 1.5rem;
 	}
 	.site-title {
 		font-weight: 600;
 		color: var(--text);
 		text-decoration: none;
 	}
-	.links {
+	.right {
 		display: flex;
-		gap: 1rem;
+		align-items: center;
+		gap: 1.25rem;
+		margin-left: auto;
 	}
 </style>
