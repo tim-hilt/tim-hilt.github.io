@@ -19,7 +19,7 @@ I personally have a Claude Pro license and don't usually get into trouble with t
 
 # The Situation At Work (Up Until Now)
 
-It's a different story at work though. We have a monthly amount of tokens that we can use. It's a soft limit, as more tokens can be assigned, if you kindly ask. Still, I'm much more token-conscious at work, than I am for personal projects. I *could* use AI to help me manage the ALM system more effectively, resolve merge conflicts, let an agent analyze and fix the last failing CI build. But I didn't, because I always tried to save tokens!
+It's a different story at work though. We have a monthly amount of tokens that we can use. It's a soft limit, as more tokens can be assigned, if you kindly ask. Still, I'm much more token-conscious at work, than I am for personal projects. I _could_ use AI to help me manage the ALM system more effectively, resolve merge conflicts, let an agent analyze and fix the last failing CI build. But I didn't, because I always tried to save tokens!
 
 Because of the soft limit, my default model tended to be GPT-5.3 Codex Medium. It provided very good results for the work that I'm doing, while not totally obliterating my token quota.
 
@@ -31,11 +31,10 @@ This changed with the release of GPT-5.6 Luna, which is now my default model. It
 
 # What Happens Next?
 
-I'm very excited to see where this development is going. GPT-5.3 Codex was OpenAIs frontier model a few months back and now the *cheapest offering of the last generation* already rivals it in benchmarks.
+I'm very excited to see where this development is going. GPT-5.3 Codex was OpenAIs frontier model a few months back and now the _cheapest offering of the last generation_ already rivals it in benchmarks.
 
 Chinese models also only lag behind a few months and feature an entirely different price offering. If this would have been the case a few months back, I wouldn't have bought a yearly Claude license, but simply invested the $200 into Openrouter credits to use Deepseek and Z.ai models.
 
 Anthropic also [announced, that a new generation of Claude Haiku will be released soon](https://www.anthropic.com/claude-opus-5-5), which could shake up the landscape once again.
 
 Regardless of outcome - we live in very fast-paced, but exciting times. It really feels like competition fuels progress in this field. I'd be interested to see how we look back on this time-period in 5-10 years.
-
