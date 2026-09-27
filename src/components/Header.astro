@@ -3,6 +3,8 @@ import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
 import SocialLinks from './SocialLinks.astro';
 import ThemeToggle from './ThemeToggle.astro';
+
+const today = new Date();
 ---
 
 <header>
@@ -10,50 +12,75 @@ import ThemeToggle from './ThemeToggle.astro';
 		<a class="site-title" href="/">
 			{SITE_TITLE}
 		</a>
-		<div class="menu" id="nav-menu">
-			<div class="menu-inner">
-				<HeaderLink href="/blog">Blog</HeaderLink>
-				<HeaderLink href="/about">About</HeaderLink>
-				<ThemeToggle />
+		<!--
+			Desktop: .dock and .dock-bar are `display: contents`, so everything
+			flows inline in the nav. Mobile: .dock becomes a floating pill at the
+			bottom of the screen that expands upward to reveal the menu.
+		-->
+		<div class="dock">
+			<div class="menu" id="nav-menu">
+				<div class="menu-inner">
+					<HeaderLink href="/blog">Blog</HeaderLink>
+					<HeaderLink href="/about">About</HeaderLink>
+					<ThemeToggle />
+					<small class="copyright">
+						&copy; {today.getFullYear()}{' '}
+						<a class="easter-egg" href="mailto:timhilt@live.de">
+							{SITE_TITLE}
+						</a>
+					</small>
+				</div>
+			</div>
+			<div class="dock-bar">
+				<button
+					type="button"
+					class="menu-toggle"
+					aria-controls="nav-menu"
+					aria-expanded="false"
+					aria-label="Open menu"
+				>
+					<span class="bars" aria-hidden="true">
+						<span class="bar top"></span>
+						<span class="bar middle"></span>
+						<span class="bar bottom"></span>
+					</span>
+				</button>
+				<span class="divider" aria-hidden="true"></span>
+				<SocialLinks />
 			</div>
 		</div>
-		<SocialLinks />
-		<button
-			type="button"
-			class="menu-toggle"
-			aria-controls="nav-menu"
-			aria-expanded="false"
-			aria-label="Open menu"
-		>
-			<span class="bars" aria-hidden="true">
-				<span class="bar top"></span>
-				<span class="bar middle"></span>
-				<span class="bar bottom"></span>
-			</span>
-		</button>
 	</nav>
 </header>
 
 <script>
+	const dock = document.querySelector<HTMLElement>('.dock');
 	const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
 	const menu = document.getElementById('nav-menu');
 
+	function isOpen() {
+		return toggle?.getAttribute('aria-expanded') === 'true';
+	}
+
 	function setOpen(open: boolean) {
-		if (!toggle || !menu) return;
+		if (!toggle || !menu || !dock) return;
 		toggle.setAttribute('aria-expanded', String(open));
 		toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
 		menu.classList.toggle('open', open);
+		dock.classList.toggle('open', open);
 	}
 
-	toggle?.addEventListener('click', () => {
-		setOpen(toggle.getAttribute('aria-expanded') !== 'true');
-	});
+	toggle?.addEventListener('click', () => setOpen(!isOpen()));
 
 	document.addEventListener('keydown', (event) => {
-		if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
+		if (event.key === 'Escape' && isOpen()) {
 			setOpen(false);
-			toggle.focus();
+			toggle?.focus();
 		}
+	});
+
+	// Close when tapping anywhere outside the dock.
+	document.addEventListener('click', (event) => {
+		if (isOpen() && dock && !dock.contains(event.target as Node)) setOpen(false);
 	});
 
 	// Reset when resizing back to desktop so the menu isn't stuck open.
@@ -80,6 +107,8 @@ import ThemeToggle from './ThemeToggle.astro';
 	}
 
 	/* Desktop: menu items flow inline in the nav. */
+	.dock,
+	.dock-bar,
 	.menu,
 	.menu-inner {
 		display: contents;
@@ -87,44 +116,92 @@ import ThemeToggle from './ThemeToggle.astro';
 	.menu :global(.theme-toggle) {
 		order: 3;
 	}
-	nav > :global(.social-links) {
+	.dock-bar > :global(.social-links) {
 		order: 2;
 		margin-left: auto;
 		margin-right: -0.75rem; /* tighten gap to theme toggle */
 	}
-	.menu-toggle {
+	.menu-toggle,
+	.divider,
+	.copyright {
 		display: none;
 	}
 
 	@media (max-width: 40rem) {
 		nav {
-			flex-wrap: wrap;
-			gap: 0 1rem;
 			padding: 1rem;
 		}
-		nav > :global(.social-links) {
-			margin-right: 0;
+
+		/* Keep page content (and the footer) clear of the floating dock. */
+		:global(body) {
+			padding-bottom: 5rem;
+		}
+
+		/* Floating pill that grows upward into a card when opened. */
+		.dock {
+			position: fixed;
+			z-index: 100;
+			left: 50%;
+			bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+			translate: -50% 0;
+			display: flex;
+			flex-direction: column;
+			min-width: 12rem;
+			padding: 0.375rem;
+			border: 1px solid var(--border);
+			border-radius: 1.5rem;
+			background: color-mix(in oklch, var(--bg) 82%, transparent);
+			-webkit-backdrop-filter: blur(12px) saturate(1.4);
+			backdrop-filter: blur(12px) saturate(1.4);
+			box-shadow:
+				0 1px 2px oklch(0% 0 0 / 8%),
+				0 8px 24px oklch(0% 0 0 / 14%);
+			transition: border-radius 0.3s ease;
+		}
+		.dock.open {
+			border-radius: 1.25rem;
+		}
+
+		.dock-bar {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 0.75rem;
+			padding-right: 0.625rem;
+		}
+		.dock-bar > :global(.social-links) {
+			margin: 0;
+			gap: 1rem;
+		}
+		.divider {
+			display: block;
+			align-self: stretch;
+			width: 1px;
+			margin: 0.375rem 0;
+			background: var(--border);
 		}
 
 		.menu-toggle {
-			order: 4;
 			display: inline-flex;
 			align-items: center;
 			justify-content: center;
 			flex-shrink: 0;
-			width: 2.25rem;
-			height: 2.25rem;
-			margin: -0.375rem -0.375rem -0.375rem 0;
+			width: 2.5rem;
+			height: 2.5rem;
 			padding: 0;
 			border: none;
-			border-radius: 0.375rem;
+			border-radius: 999px;
 			background: none;
 			color: var(--muted);
 			cursor: pointer;
+			transition: background-color 0.2s ease;
 		}
 		.menu-toggle:hover,
 		.menu-toggle[aria-expanded='true'] {
 			color: var(--text);
+		}
+		.menu-toggle[aria-expanded='true'] {
+			background: var(--surface-active);
 		}
 		.menu-toggle:focus-visible {
 			outline: 2px solid var(--moss);
@@ -167,10 +244,8 @@ import ThemeToggle from './ThemeToggle.astro';
 
 		/* Animate height via grid rows (0fr -> 1fr) plus fade/slide. */
 		.menu {
-			order: 5;
 			display: grid;
 			grid-template-rows: 0fr;
-			flex-basis: 100%;
 			opacity: 0;
 			visibility: hidden;
 			transition:
@@ -190,33 +265,64 @@ import ThemeToggle from './ThemeToggle.astro';
 		.menu-inner {
 			display: flex;
 			flex-direction: column;
-			align-items: flex-start;
-			gap: 1rem;
+			align-items: center;
+			gap: 0.25rem;
 			min-height: 0;
 			overflow: hidden;
-			transform: translateY(-0.5rem);
+			transform: translateY(0.5rem);
 			transition: transform 0.3s ease;
 		}
 		.menu.open .menu-inner {
 			transform: none;
 		}
-		/* Spacing lives on a child so it collapses with the row. */
-		.menu-inner::before {
-			content: '';
+		.menu-inner > :global(a) {
 			align-self: stretch;
-			margin-top: 1rem;
-			border-top: 1px solid var(--border);
+			text-align: center;
+			padding: 0.5rem 0.75rem;
+			border-radius: 0.75rem;
+			font-size: 1.0625rem;
+		}
+		.menu-inner > :global(a.active) {
+			background: var(--surface-active);
 		}
 		.menu :global(.theme-toggle) {
 			order: 0;
-			margin-bottom: 0.125rem; /* keep border from being clipped */
+			margin: 0.25rem 0.5rem;
+		}
+		/* Footer is hidden on mobile, so the copyright lives in the menu. */
+		.copyright {
+			display: block;
+			order: 0;
+			margin: 0.25rem 0.75rem 0;
+			color: var(--muted);
+			font-size: 0.8125rem;
+		}
+		.easter-egg,
+		.easter-egg:hover,
+		.easter-egg:visited {
+			color: inherit;
+			text-decoration: none;
+			cursor: text;
+		}
+		/* Separator between menu and bar; lives inside so it collapses too. */
+		.menu-inner::after {
+			content: '';
+			order: 1;
+			align-self: stretch;
+			margin: 0.25rem 0 0.375rem;
+			border-top: 1px solid var(--border);
+		}
+		.menu-inner > :global(:first-child) {
+			margin-top: 0.25rem;
 		}
 	}
 	@media (prefers-reduced-motion: reduce) {
+		.dock,
 		.bar,
 		.menu,
 		.menu.open,
-		.menu-inner {
+		.menu-inner,
+		.menu-toggle {
 			transition: none;
 		}
 	}

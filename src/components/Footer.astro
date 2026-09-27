@@ -7,7 +7,10 @@ const today = new Date();
 
 <footer>
 	<span>
-		&copy; {today.getFullYear()} <a class="easter-egg" href="mailto:timhilt@live.de">{SITE_TITLE}</a>
+		&copy; {today.getFullYear()}{' '}
+		<a class="easter-egg" href="mailto:timhilt@live.de">
+			{SITE_TITLE}
+		</a>
 	</span>
 	<span aria-hidden="true">&sdot;</span>
 	<SocialLinks />
@@ -31,5 +34,11 @@ const today = new Date();
 		color: inherit;
 		text-decoration: none;
 		cursor: text;
+	}
+	/* On mobile, copyright moves into the dock menu and socials live in the pill. */
+	@media (max-width: 40rem) {
+		footer {
+			display: none;
+		}
 	}
 </style>
