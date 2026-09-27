@@ -7,7 +7,7 @@ const today = new Date();
 
 <footer>
 	<span>
-		&copy; {today.getFullYear()} {SITE_TITLE}
+		&copy; {today.getFullYear()} <a class="easter-egg" href="mailto:timhilt@live.de">{SITE_TITLE}</a>
 	</span>
 	<span aria-hidden="true">&sdot;</span>
 	<SocialLinks />
@@ -24,5 +24,12 @@ const today = new Date();
 		padding: 2rem 1rem;
 		color: var(--muted);
 		font-size: 0.875rem;
+	}
+	.easter-egg,
+	.easter-egg:hover,
+	.easter-egg:visited {
+		color: inherit;
+		text-decoration: none;
+		cursor: text;
 	}
 </style>
