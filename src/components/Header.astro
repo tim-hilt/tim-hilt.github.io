@@ -10,14 +10,58 @@ import ThemeToggle from './ThemeToggle.astro';
 		<a class="site-title" href="/">
 			{SITE_TITLE}
 		</a>
-		<HeaderLink href="/blog">Blog</HeaderLink>
-		<HeaderLink href="/about">About</HeaderLink>
-		<div class="right">
-			<SocialLinks />
-			<ThemeToggle />
+		<div class="menu" id="nav-menu">
+			<div class="menu-inner">
+				<HeaderLink href="/blog">Blog</HeaderLink>
+				<HeaderLink href="/about">About</HeaderLink>
+				<ThemeToggle />
+			</div>
 		</div>
+		<SocialLinks />
+		<button
+			type="button"
+			class="menu-toggle"
+			aria-controls="nav-menu"
+			aria-expanded="false"
+			aria-label="Open menu"
+		>
+			<span class="bars" aria-hidden="true">
+				<span class="bar top"></span>
+				<span class="bar middle"></span>
+				<span class="bar bottom"></span>
+			</span>
+		</button>
 	</nav>
 </header>
+
+<script>
+	const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+	const menu = document.getElementById('nav-menu');
+
+	function setOpen(open: boolean) {
+		if (!toggle || !menu) return;
+		toggle.setAttribute('aria-expanded', String(open));
+		toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+		menu.classList.toggle('open', open);
+	}
+
+	toggle?.addEventListener('click', () => {
+		setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+	});
+
+	document.addEventListener('keydown', (event) => {
+		if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
+			setOpen(false);
+			toggle.focus();
+		}
+	});
+
+	// Reset when resizing back to desktop so the menu isn't stuck open.
+	window.matchMedia('(min-width: 40.0625rem)').addEventListener('change', (event) => {
+		if (event.matches) setOpen(false);
+	});
+</script>
+
 <style>
 	header {
 		border-bottom: 1px solid var(--border);
@@ -34,23 +78,146 @@ import ThemeToggle from './ThemeToggle.astro';
 		color: var(--text);
 		text-decoration: none;
 	}
-	.right {
-		display: flex;
-		align-items: center;
-		gap: 1.25rem;
-		margin-left: auto;
+
+	/* Desktop: menu items flow inline in the nav. */
+	.menu,
+	.menu-inner {
+		display: contents;
 	}
-	@media (max-width: 30rem) {
+	.menu :global(.theme-toggle) {
+		order: 3;
+	}
+	nav > :global(.social-links) {
+		order: 2;
+		margin-left: auto;
+		margin-right: -0.75rem; /* tighten gap to theme toggle */
+	}
+	.menu-toggle {
+		display: none;
+	}
+
+	@media (max-width: 40rem) {
 		nav {
-			gap: 1rem;
+			flex-wrap: wrap;
+			gap: 0 1rem;
 			padding: 1rem;
 		}
-		.right {
-			gap: 1rem;
+		nav > :global(.social-links) {
+			margin-right: 0;
 		}
-		/* Social links are also in the footer. */
-		.right :global(.social-links) {
-			display: none;
+
+		.menu-toggle {
+			order: 4;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+			width: 2.25rem;
+			height: 2.25rem;
+			margin: -0.375rem -0.375rem -0.375rem 0;
+			padding: 0;
+			border: none;
+			border-radius: 0.375rem;
+			background: none;
+			color: var(--muted);
+			cursor: pointer;
+		}
+		.menu-toggle:hover,
+		.menu-toggle[aria-expanded='true'] {
+			color: var(--text);
+		}
+		.menu-toggle:focus-visible {
+			outline: 2px solid var(--moss);
+			outline-offset: 1px;
+		}
+		.bars {
+			position: relative;
+			width: 1.125rem;
+			height: 0.875rem;
+		}
+		.bar {
+			position: absolute;
+			left: 0;
+			width: 100%;
+			height: 2px;
+			border-radius: 1px;
+			background: currentColor;
+			transition:
+				transform 0.25s ease,
+				opacity 0.2s ease;
+		}
+		.top {
+			top: 0;
+		}
+		.middle {
+			top: calc(50% - 1px);
+		}
+		.bottom {
+			bottom: 0;
+		}
+		.menu-toggle[aria-expanded='true'] .top {
+			transform: translateY(calc(0.4375rem - 1px)) rotate(45deg);
+		}
+		.menu-toggle[aria-expanded='true'] .middle {
+			opacity: 0;
+		}
+		.menu-toggle[aria-expanded='true'] .bottom {
+			transform: translateY(calc(-0.4375rem + 1px)) rotate(-45deg);
+		}
+
+		/* Animate height via grid rows (0fr -> 1fr) plus fade/slide. */
+		.menu {
+			order: 5;
+			display: grid;
+			grid-template-rows: 0fr;
+			flex-basis: 100%;
+			opacity: 0;
+			visibility: hidden;
+			transition:
+				grid-template-rows 0.3s ease,
+				opacity 0.2s ease,
+				visibility 0s linear 0.3s;
+		}
+		.menu.open {
+			grid-template-rows: 1fr;
+			opacity: 1;
+			visibility: visible;
+			transition:
+				grid-template-rows 0.3s ease,
+				opacity 0.25s ease 0.05s,
+				visibility 0s;
+		}
+		.menu-inner {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 1rem;
+			min-height: 0;
+			overflow: hidden;
+			transform: translateY(-0.5rem);
+			transition: transform 0.3s ease;
+		}
+		.menu.open .menu-inner {
+			transform: none;
+		}
+		/* Spacing lives on a child so it collapses with the row. */
+		.menu-inner::before {
+			content: '';
+			align-self: stretch;
+			margin-top: 1rem;
+			border-top: 1px solid var(--border);
+		}
+		.menu :global(.theme-toggle) {
+			order: 0;
+			margin-bottom: 0.125rem; /* keep border from being clipped */
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.bar,
+		.menu,
+		.menu.open,
+		.menu-inner {
+			transition: none;
 		}
 	}
 </style>
