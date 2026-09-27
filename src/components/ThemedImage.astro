@@ -1,0 +1,41 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+/**
+ * Image with separate variants for the light and dark theme. Only the variant
+ * matching the active theme (system preference or `data-theme` override) is shown.
+ */
+interface Props {
+	light: ImageMetadata;
+	dark: ImageMetadata;
+	alt: string;
+}
+
+const { light, dark, alt } = Astro.props;
+---
+
+<Image src={light} alt={alt} class="themed-image-light" />
+<Image src={dark} alt={alt} class="themed-image-dark" />
+
+<style>
+	.themed-image-dark {
+		display: none;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not([data-theme='light'])) .themed-image-light {
+			display: none;
+		}
+		:global(:root:not([data-theme='light'])) .themed-image-dark {
+			display: revert;
+		}
+	}
+
+	:global(:root[data-theme='dark']) .themed-image-light {
+		display: none;
+	}
+	:global(:root[data-theme='dark']) .themed-image-dark {
+		display: revert;
+	}
+</style>
