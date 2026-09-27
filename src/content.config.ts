@@ -12,6 +12,8 @@ const blog = defineCollection({
 		// Transform string to Date object
 		pubDate: z.coerce.date(),
 		updatedDate: z.coerce.date().optional(),
+		// Drafts are visible in dev but excluded from production builds
+		draft: z.boolean().default(false),
 	}),
 });
 
