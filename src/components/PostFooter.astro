@@ -1,4 +1,5 @@
 ---
+import ExternalLink from './ExternalLink.astro';
 import { GITHUB_URL, LINKEDIN_URL, RSS_URL } from '../consts';
 ---
 
@@ -7,14 +8,8 @@ import { GITHUB_URL, LINKEDIN_URL, RSS_URL } from '../consts';
 	<p>
 		Thanks for reading! If you want to stay up to date with my writing, you can subscribe to my blog
 		via <a href={RSS_URL}>RSS</a> or connect with me on{' '}
-		<a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer">
-			LinkedIn
-		</a>{' '}
-		and{' '}
-		<a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
-			GitHub
-		</a>
-		.
+		<ExternalLink href={LINKEDIN_URL}>LinkedIn</ExternalLink> and{' '}
+		<ExternalLink href={GITHUB_URL}>GitHub</ExternalLink>.
 	</p>
 </footer>
 <style>

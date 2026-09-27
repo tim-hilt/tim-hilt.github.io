@@ -129,6 +129,12 @@ a:hover {
 	color: var(--link-hover);
 }
 
+/* One keyboard-focus ring for every interactive element. */
+:focus-visible {
+	outline: 2px solid var(--moss);
+	outline-offset: 1px;
+}
+
 img {
 	max-width: 100%;
 	height: auto;

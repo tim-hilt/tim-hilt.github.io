@@ -1,11 +1,21 @@
 ---
+import { Image } from 'astro:assets';
+import ExternalLink from '../components/ExternalLink.astro';
 import { GITHUB_URL, LINKEDIN_URL, RSS_URL } from '../consts';
+import portrait from '../assets/me.jpeg';
 import Page from '../layouts/Page.astro';
 ---
 
 <Page title="About" description="About Tim Hilt">
 	<h1>About</h1>
-	<img src="/me.jpeg" alt="Portrait of Tim Hilt" width="2128" height="1894" />
+	<!-- Displayed at most 20rem wide (see style below); 2x widths cover high-DPI screens. -->
+	<Image
+		src={portrait}
+		alt="Portrait of Tim Hilt"
+		width={640}
+		widths={[320, 640]}
+		sizes="(max-width: 22rem) 100vw, 20rem"
+	/>
 
 	<p>
 		Hi, I'm Tim. I believe most problems at work aren't technical: they come from poor communication
@@ -13,13 +23,10 @@ import Page from '../layouts/Page.astro';
 		software is built.
 	</p>
 	<p>
-		At{' '}
-		<a href="https://festo.com" target="_blank" rel="noopener noreferrer">
-			Festo
-		</a>{' '}
-		in Esslingen, Germany, I evolve the architecture of a large embedded software platform (>1M
-		LOC), with a focus on performance and low memory footprint. I also coach our engineers in
-		agentic coding to help them become more productive.
+		At <ExternalLink href="https://festo.com">Festo</ExternalLink> in Esslingen, Germany, I evolve
+		the architecture of a large embedded software platform (>1M LOC), with a focus on performance
+		and low memory footprint. I also coach our engineers in agentic coding to help them become more
+		productive.
 	</p>
 	<p>
 		I like Espresso, Split Mechanical Keyboards and Road Cycling. I'm married and a father of three
@@ -27,14 +34,8 @@ import Page from '../layouts/Page.astro';
 	</p>
 	<p>
 		Follow along via <a href={RSS_URL}>RSS</a>, or connect with me on{' '}
-		<a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer">
-			LinkedIn
-		</a>{' '}
-		or{' '}
-		<a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
-			GitHub
-		</a>
-		.
+		<ExternalLink href={LINKEDIN_URL}>LinkedIn</ExternalLink> or{' '}
+		<ExternalLink href={GITHUB_URL}>GitHub</ExternalLink>.
 	</p>
 </Page>
 

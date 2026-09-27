@@ -1,0 +1,13 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+/**
+ * Link to another website. Opens in a new tab and sends no referrer or
+ * `window.opener` to the target. Other attributes pass through to the `<a>`.
+ */
+type Props = HTMLAttributes<'a'> & { href: string };
+---
+
+<a target="_blank" rel="noopener noreferrer" {...Astro.props}>
+	<slot />
+</a>
