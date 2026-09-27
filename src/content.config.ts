@@ -3,16 +3,15 @@ import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
 const blog = defineCollection({
-	// Load Markdown and MDX files in the `src/content/blog/` directory.
+	// Each file's path relative to `base`, minus the extension, becomes the post id and URL slug.
 	loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
-	// Type-check frontmatter using a schema
 	schema: z.object({
 		title: z.string(),
 		description: z.string(),
-		// Transform string to Date object
+		// Frontmatter dates are strings like `2025-01-31`.
 		pubDate: z.coerce.date(),
 		updatedDate: z.coerce.date().optional(),
-		// Drafts are visible in dev but excluded from production builds
+		// Drafts are visible in dev but excluded from production builds (see lib/posts.ts).
 		draft: z.boolean().default(false),
 	}),
 });

@@ -1,10 +1,9 @@
 ---
 import { SITE_TITLE } from '../consts';
+import Copyright from './Copyright.astro';
 import HeaderLink from './HeaderLink.astro';
 import SocialLinks from './SocialLinks.astro';
 import ThemeToggle from './ThemeToggle.astro';
-
-const today = new Date();
 ---
 
 <header>
@@ -24,10 +23,7 @@ const today = new Date();
 					<HeaderLink href="/about">About</HeaderLink>
 					<ThemeToggle />
 					<small class="copyright">
-						&copy; {today.getFullYear()}{' '}
-						<a class="easter-egg" href="mailto:timhilt@live.de">
-							{SITE_TITLE}
-						</a>
+						<Copyright />
 					</small>
 				</div>
 			</div>
@@ -53,39 +49,39 @@ const today = new Date();
 </header>
 
 <script>
-	const dock = document.querySelector<HTMLElement>('.dock');
-	const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
-	const menu = document.getElementById('nav-menu');
+	// The dock's `open` class drives all open-state styling; the toggle's
+	// aria-expanded mirrors it for assistive tech.
+	const dock = document.querySelector<HTMLElement>('.dock')!;
+	const toggle = dock.querySelector<HTMLButtonElement>('.menu-toggle')!;
 
 	function isOpen() {
-		return toggle?.getAttribute('aria-expanded') === 'true';
+		return dock.classList.contains('open');
 	}
 
 	function setOpen(open: boolean) {
-		if (!toggle || !menu || !dock) return;
+		dock.classList.toggle('open', open);
 		toggle.setAttribute('aria-expanded', String(open));
 		toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-		menu.classList.toggle('open', open);
-		dock.classList.toggle('open', open);
 	}
 
-	toggle?.addEventListener('click', () => setOpen(!isOpen()));
+	toggle.addEventListener('click', () => setOpen(!isOpen()));
 
 	document.addEventListener('keydown', (event) => {
 		if (event.key === 'Escape' && isOpen()) {
 			setOpen(false);
-			toggle?.focus();
+			toggle.focus();
 		}
 	});
 
 	// Close when tapping anywhere outside the dock.
 	document.addEventListener('click', (event) => {
-		if (isOpen() && dock && !dock.contains(event.target as Node)) setOpen(false);
+		if (isOpen() && !dock.contains(event.target as Node)) setOpen(false);
 	});
 
-	// Reset when resizing back to desktop so the menu isn't stuck open.
-	window.matchMedia('(min-width: 40.0625rem)').addEventListener('change', (event) => {
-		if (event.matches) setOpen(false);
+	// Close when leaving the mobile layout (same breakpoint as the CSS) so the
+	// menu isn't stuck open when resizing back.
+	window.matchMedia('(max-width: 40rem)').addEventListener('change', (event) => {
+		if (!event.matches) setOpen(false);
 	});
 </script>
 
@@ -253,7 +249,7 @@ const today = new Date();
 				opacity 0.2s ease,
 				visibility 0s linear 0.3s;
 		}
-		.menu.open {
+		.dock.open .menu {
 			grid-template-rows: 1fr;
 			opacity: 1;
 			visibility: visible;
@@ -272,7 +268,7 @@ const today = new Date();
 			transform: translateY(0.5rem);
 			transition: transform 0.3s ease;
 		}
-		.menu.open .menu-inner {
+		.dock.open .menu-inner {
 			transform: none;
 		}
 		.menu-inner > :global(a) {
@@ -297,13 +293,6 @@ const today = new Date();
 			color: var(--muted);
 			font-size: 0.8125rem;
 		}
-		.easter-egg,
-		.easter-egg:hover,
-		.easter-egg:visited {
-			color: inherit;
-			text-decoration: none;
-			cursor: text;
-		}
 		/* Separator between menu and bar; lives inside so it collapses too. */
 		.menu-inner::after {
 			content: '';
@@ -320,7 +309,7 @@ const today = new Date();
 		.dock,
 		.bar,
 		.menu,
-		.menu.open,
+		.dock.open .menu,
 		.menu-inner,
 		.menu-toggle {
 			transition: none;

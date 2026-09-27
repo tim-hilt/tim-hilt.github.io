@@ -1,4 +1,4 @@
-import { getPublishedPosts } from '../lib/posts';
+import { getPublishedPosts, postUrl } from '../lib/posts';
 import rss from '@astrojs/rss';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { render } from 'astro:content';
@@ -21,8 +21,10 @@ export async function GET(context) {
 			const { Content } = await render(post);
 			const html = await container.renderToString(Content);
 			return {
-				...post.data,
-				link: `/blog/${post.id}/`,
+				title: post.data.title,
+				description: post.data.description,
+				pubDate: post.data.pubDate,
+				link: postUrl(post),
 				content: absolutizeUrls(html, context.site),
 			};
 		}),

@@ -37,40 +37,41 @@
 </div>
 
 <script>
+	import { THEME_STORAGE_KEY } from '../lib/theme';
+
 	type Theme = 'light' | 'dark' | 'system';
-	const STORAGE_KEY = 'theme';
 
-	function stored(): Theme {
-		try {
-			const value = localStorage.getItem(STORAGE_KEY);
-			return value === 'light' || value === 'dark' ? value : 'system';
-		} catch {
-			return 'system';
-		}
-	}
+	const root = document.documentElement;
+	const buttons = document.querySelectorAll<HTMLButtonElement>('[data-theme-choice]');
 
-	function apply(theme: Theme) {
-		const root = document.documentElement;
-		if (theme === 'system') delete root.dataset.theme;
-		else root.dataset.theme = theme;
-
-		try {
-			if (theme === 'system') localStorage.removeItem(STORAGE_KEY);
-			else localStorage.setItem(STORAGE_KEY, theme);
-		} catch {
-			// Storage unavailable (e.g. privacy mode): theme still applies for this page.
-		}
-
-		document.querySelectorAll<HTMLButtonElement>('[data-theme-choice]').forEach((button) => {
+	/** Marks the button for `theme` as pressed. */
+	function showSelected(theme: Theme) {
+		buttons.forEach((button) => {
 			button.setAttribute('aria-pressed', String(button.dataset.themeChoice === theme));
 		});
 	}
 
-	document.querySelectorAll<HTMLButtonElement>('[data-theme-choice]').forEach((button) => {
-		button.addEventListener('click', () => apply(button.dataset.themeChoice as Theme));
+	/** Applies `theme` to the page, remembers it for future visits, and updates the buttons. */
+	function choose(theme: Theme) {
+		if (theme === 'system') delete root.dataset.theme;
+		else root.dataset.theme = theme;
+
+		try {
+			if (theme === 'system') localStorage.removeItem(THEME_STORAGE_KEY);
+			else localStorage.setItem(THEME_STORAGE_KEY, theme);
+		} catch {
+			// Storage unavailable (e.g. privacy mode): theme still applies for this page.
+		}
+
+		showSelected(theme);
+	}
+
+	buttons.forEach((button) => {
+		button.addEventListener('click', () => choose(button.dataset.themeChoice as Theme));
 	});
 
-	apply(stored());
+	// BaseHead already applied (and validated) the stored theme before first paint.
+	showSelected((root.dataset.theme as Theme | undefined) ?? 'system');
 </script>
 
 <style>

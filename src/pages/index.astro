@@ -1,18 +1,19 @@
 ---
 import { getPublishedPosts } from '../lib/posts';
 import PostList from '../components/PostList.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import Page from '../layouts/Page.astro';
 
-const posts = (await getPublishedPosts())
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, 5);
+const RECENT_POST_COUNT = 5;
+const posts = (await getPublishedPosts()).slice(0, RECENT_POST_COUNT);
 ---
 
-<Page title={SITE_TITLE} description={SITE_DESCRIPTION}>
+<Page>
 	<h1>Hi, I'm Tim.</h1>
 	<p>Here, I share my thoughts on technical topics at work and outside. Let's connect!</p>
-	<p>Although AI helps me to develop and maintain this website, all my articles are written entirely by myself, without any agents rewriting or correcting my output.</p>
+	<p>
+		Although AI helps me to develop and maintain this website, all my articles are written entirely
+		by myself, without any agents rewriting or correcting my output.
+	</p>
 
 	<h2>Recent posts</h2>
 	<PostList posts={posts} />

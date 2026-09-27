@@ -1,17 +1,10 @@
 ---
-import { SITE_TITLE } from '../consts';
+import Copyright from './Copyright.astro';
 import SocialLinks from './SocialLinks.astro';
-
-const today = new Date();
 ---
 
 <footer>
-	<span>
-		&copy; {today.getFullYear()}{' '}
-		<a class="easter-egg" href="mailto:timhilt@live.de">
-			{SITE_TITLE}
-		</a>
-	</span>
+	<Copyright />
 	<span aria-hidden="true">&sdot;</span>
 	<SocialLinks />
 </footer>
@@ -28,14 +21,7 @@ const today = new Date();
 		color: var(--muted);
 		font-size: 0.875rem;
 	}
-	.easter-egg,
-	.easter-egg:hover,
-	.easter-egg:visited {
-		color: inherit;
-		text-decoration: none;
-		cursor: text;
-	}
-	/* On mobile, copyright moves into the dock menu and socials live in the pill. */
+	/* Mobile breakpoint, see Header.astro: its dock menu shows the copyright and socials instead. */
 	@media (max-width: 40rem) {
 		footer {
 			display: none;

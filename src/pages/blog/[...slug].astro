@@ -1,8 +1,9 @@
 ---
-import { type CollectionEntry, render } from 'astro:content';
-import { getPublishedPosts } from '../../lib/posts';
+import { render } from 'astro:content';
+import { getPublishedPosts, type Post } from '../../lib/posts';
 import BlogPost from '../../layouts/BlogPost.astro';
 
+// This route defines post URLs; keep `postUrl` in lib/posts.ts in sync.
 export async function getStaticPaths() {
 	const posts = await getPublishedPosts();
 	return posts.map((post) => ({
@@ -10,7 +11,7 @@ export async function getStaticPaths() {
 		props: post,
 	}));
 }
-type Props = CollectionEntry<'blog'>;
+type Props = Post;
 
 const post = Astro.props;
 const { Content } = await render(post);

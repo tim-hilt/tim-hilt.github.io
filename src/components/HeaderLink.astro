@@ -1,12 +1,15 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
 
-type Props = HTMLAttributes<'a'>;
+/**
+ * Top-level navigation link. `href` must be a site section such as `/blog`;
+ * the link is marked active on that page and on every page beneath it.
+ */
+type Props = HTMLAttributes<'a'> & { href: string };
 
 const { href, class: className, ...props } = Astro.props;
-const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
-const subpath = pathname.match(/[^\/]+/g);
-const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
+const currentSection = '/' + Astro.url.pathname.split('/')[1];
+const isActive = href === currentSection;
 ---
 
 <a href={href} class:list={[className, { active: isActive }]} {...props}>

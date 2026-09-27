@@ -1,26 +1,26 @@
 ---
-// Import the global.css file here so that it is included on
-// all pages through the use of the <BaseHead /> component.
+// Imported here so global styles are included on every page.
 import '../styles/global.css';
-import { SITE_TITLE } from '../consts';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { THEME_STORAGE_KEY } from '../lib/theme';
 
-interface Props {
-	title: string;
-	description: string;
+export interface Props {
+	/** Page-specific title; the site title is appended. Omit on the home page. */
+	title?: string;
+	description?: string;
 }
 
+const { title, description = SITE_DESCRIPTION } = Astro.props;
+const documentTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-
-const { title, description } = Astro.props;
 ---
 
-<!-- Global Metadata -->
 <meta charset="utf-8" />
 
 <!-- Apply a stored theme before first paint to avoid a flash; default follows the system. -->
-<script is:inline>
+<script is:inline define:vars={{ storageKey: THEME_STORAGE_KEY }}>
 	try {
-		const theme = localStorage.getItem('theme');
+		const theme = localStorage.getItem(storageKey);
 		if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
 	} catch {}
 </script>
@@ -35,16 +35,13 @@ const { title, description } = Astro.props;
 	href={new URL('rss.xml', Astro.site)}
 />
 <meta name="generator" content={Astro.generator} />
-
-<!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
 
-<!-- Primary Meta Tags -->
-<title>{title}</title>
+<title>{documentTitle}</title>
 <meta name="description" content={description} />
 
-<!-- Open Graph -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content={Astro.url} />
-<meta property="og:title" content={title} />
+<meta property="og:site_name" content={SITE_TITLE} />
+<meta property="og:title" content={title ?? SITE_TITLE} />
 <meta property="og:description" content={description} />
