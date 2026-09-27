@@ -23,12 +23,47 @@ const { title, description, pubDate, updatedDate } = Astro.props;
 				)}
 			</div>
 		</header>
-		<slot />
+		<div class="post-content">
+			<slot />
+		</div>
 		<PostFooter />
 	</article>
 </Page>
 
+<script>
+	// Turn each content heading into a link to its own anchor. Headings already
+	// carry slug ids from the Markdown pipeline; a native <a href="#id"> pushes the
+	// hash onto the history stack and scrolls to it without extra JS.
+	for (const heading of document.querySelectorAll<HTMLElement>(
+		'.post-content :is(h1, h2, h3, h4, h5, h6)[id]',
+	)) {
+		const link = document.createElement('a');
+		link.className = 'heading-link';
+		link.href = `#${encodeURIComponent(heading.id)}`;
+		link.append(...heading.childNodes);
+		heading.append(link);
+	}
+</script>
+
 <style>
+	.post-content :global(:is(h1, h2, h3, h4, h5, h6)[id]) {
+		scroll-margin-top: 1rem;
+	}
+	.post-content :global(.heading-link) {
+		color: inherit;
+		text-decoration: none;
+	}
+	.post-content :global(.heading-link::after) {
+		content: '#' / '';
+		margin-left: 0.35em;
+		color: var(--muted);
+		opacity: 0;
+		transition: opacity 0.15s;
+	}
+	.post-content :global(.heading-link:hover::after),
+	.post-content :global(.heading-link:focus-visible::after) {
+		opacity: 0.5;
+	}
 	.post-header {
 		margin-bottom: 2rem;
 	}
