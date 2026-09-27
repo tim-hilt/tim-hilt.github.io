@@ -1,5 +1,5 @@
 ---
-import { GITHUB_URL, LINKEDIN_URL } from '../consts';
+import { GITHUB_URL, LINKEDIN_URL, RSS_URL } from '../consts';
 import Page from '../layouts/Page.astro';
 ---
 
@@ -26,7 +26,7 @@ import Page from '../layouts/Page.astro';
 		boys. I'm a follower of Jesus Christ and invest in young children by teaching in sunday school.
 	</p>
 	<p>
-		Follow along via <a href="/rss.xml">RSS</a>, or connect with me on{' '}
+		Follow along via <a href={RSS_URL}>RSS</a>, or connect with me on{' '}
 		<a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer">
 			LinkedIn
 		</a>{' '}

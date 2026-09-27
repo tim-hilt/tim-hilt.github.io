@@ -102,7 +102,11 @@ import ThemeToggle from './ThemeToggle.astro';
 		text-decoration: none;
 	}
 
-	/* Desktop: menu items flow inline in the nav. */
+	/*
+	 * Desktop: menu items flow inline in the nav. DOM order is mobile-first
+	 * (menu above dock bar), so `order` moves the social links before the
+	 * theme toggle to keep the toggle at the far right.
+	 */
 	.dock,
 	.dock-bar,
 	.menu,

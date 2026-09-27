@@ -4,6 +4,9 @@ interface Props {
 }
 
 const { date } = Astro.props;
+// Frontmatter dates are parsed as UTC midnight, so format in UTC (YYYY-MM-DD);
+// a local-time format would shift the day in timezones west of UTC.
+const isoDate = date.toISOString().slice(0, 10);
 ---
 
-<time datetime={date.toISOString()}>{date.toISOString().slice(0, 10)}</time>
+<time datetime={isoDate}>{isoDate}</time>

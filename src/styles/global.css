@@ -18,13 +18,25 @@
 	--bg: light-dark(oklch(97% 0.015 180), oklch(14% 0.025 170));
 	--text: light-dark(var(--forest-2), var(--lichen));
 	--muted: light-dark(var(--forest-3), var(--forest-5));
-	--border: light-dark(oklch(76% 0.05 148 / 45%), oklch(76% 0.05 148 / 12%));
+	--border: light-dark(
+		color-mix(in oklch, var(--forest-5) 45%, transparent),
+		color-mix(in oklch, var(--forest-5) 12%, transparent)
+	);
 	--code-bg: light-dark(oklch(93% 0.035 135 / 70%), var(--forest-2));
 	--link: light-dark(var(--forest-1), var(--moss));
 	--link-hover: light-dark(var(--forest-3), var(--lichen));
-	--selection: light-dark(oklch(74% 0.15 130 / 35%), oklch(74% 0.15 130 / 30%));
-	--surface-active: light-dark(oklch(76% 0.05 148 / 35%), var(--forest-1));
-	--glow: light-dark(oklch(74% 0.15 130 / 18%), oklch(74% 0.15 130 / 9%));
+	--selection: light-dark(
+		color-mix(in oklch, var(--moss) 35%, transparent),
+		color-mix(in oklch, var(--moss) 30%, transparent)
+	);
+	--surface-active: light-dark(
+		color-mix(in oklch, var(--forest-5) 35%, transparent),
+		var(--forest-1)
+	);
+	--glow: light-dark(
+		color-mix(in oklch, var(--moss) 18%, transparent),
+		color-mix(in oklch, var(--moss) 9%, transparent)
+	);
 	--max-width: 42rem;
 
 	color-scheme: light dark;
