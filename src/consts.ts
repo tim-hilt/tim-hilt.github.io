@@ -2,6 +2,7 @@
 
 export const SITE_TITLE = 'Tim Hilt';
 export const SITE_DESCRIPTION = 'Personal blog of Tim Hilt.';
+export const AUTHOR_NAME = 'Tim Hilt';
 
 export const EMAIL = 'timhilt@live.de';
 export const GITHUB_URL = 'https://github.com/tim-hilt';

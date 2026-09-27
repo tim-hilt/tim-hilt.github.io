@@ -1,19 +1,48 @@
 ---
 // Imported here so global styles are included on every page.
 import '../styles/global.css';
-import { RSS_URL, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { getImage } from 'astro:assets';
+import portrait from '../assets/me.jpeg';
+import { AUTHOR_NAME, RSS_URL, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { THEME_STORAGE_KEY } from '../lib/theme';
+
+/** An image plus the text that describes it to people who cannot see it. */
+export interface PreviewImage {
+	src: ImageMetadata;
+	alt: string;
+}
 
 export interface Props {
 	/** Page-specific title; the site title is appended. Omit on the home page. */
 	title?: string;
 	/** Summary for search results and link previews. Defaults to the site description. */
 	description?: string;
+	/** Image shown in link previews (LinkedIn, Slack, ...). Defaults to the author's portrait. */
+	previewImage?: PreviewImage;
+	/** Set on blog posts; marks the page as an article in link previews. Omit on other pages. */
+	article?: { published: Date; updated?: Date };
 }
 
-const { title, description = SITE_DESCRIPTION } = Astro.props;
+const DEFAULT_PREVIEW_IMAGE: PreviewImage = { src: portrait, alt: `Portrait of ${AUTHOR_NAME}` };
+// LinkedIn's recommended preview width; larger sources are scaled down, smaller ones kept.
+const PREVIEW_IMAGE_MAX_WIDTH = 1200;
+
+const {
+	title,
+	description = SITE_DESCRIPTION,
+	previewImage = DEFAULT_PREVIEW_IMAGE,
+	article,
+} = Astro.props;
 const documentTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// JPEG because link-preview crawlers don't reliably support WebP/AVIF (Astro's default).
+// The aspect ratio is kept; each platform crops to its own frame.
+const ogImage = await getImage({
+	src: previewImage.src,
+	width: Math.min(previewImage.src.width, PREVIEW_IMAGE_MAX_WIDTH),
+	format: 'jpeg',
+});
 ---
 
 <meta charset="utf-8" />
@@ -41,8 +70,22 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 <title>{documentTitle}</title>
 <meta name="description" content={description} />
 
-<meta property="og:type" content="website" />
-<meta property="og:url" content={Astro.url} />
+<meta property="og:type" content={article ? 'article' : 'website'} />
+<meta property="og:url" content={canonicalURL} />
 <meta property="og:site_name" content={SITE_TITLE} />
 <meta property="og:title" content={title ?? SITE_TITLE} />
 <meta property="og:description" content={description} />
+<meta property="og:image" content={new URL(ogImage.src, Astro.site)} />
+<meta property="og:image:type" content="image/jpeg" />
+<meta property="og:image:width" content={String(ogImage.attributes.width)} />
+<meta property="og:image:height" content={String(ogImage.attributes.height)} />
+<meta property="og:image:alt" content={previewImage.alt} />
+{article && (
+	<>
+		<meta property="article:published_time" content={article.published.toISOString()} />
+		{article.updated && (
+			<meta property="article:modified_time" content={article.updated.toISOString()} />
+		)}
+		<meta property="article:author" content={AUTHOR_NAME} />
+	</>
+)}

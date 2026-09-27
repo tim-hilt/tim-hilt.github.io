@@ -6,10 +6,15 @@ import Page from './Page.astro';
 
 type Props = Post['data'];
 
-const { title, description, pubDate, updatedDate } = Astro.props;
+const { title, description, pubDate, updatedDate, previewImage } = Astro.props;
 ---
 
-<Page title={title} description={description}>
+<Page
+	title={title}
+	description={description}
+	previewImage={previewImage}
+	article={{ published: pubDate, updated: updatedDate }}
+>
 	<article>
 		<header class="post-header">
 			<h1>{title}</h1>
